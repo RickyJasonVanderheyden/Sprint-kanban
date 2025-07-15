@@ -3,10 +3,17 @@ import { createJwtToken, setJwtCookie } from '../../../lib/auth';
 import dbConnect from '../../../lib/db/db';
 import User from '../../../lib/db/User';
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
+      console.log('Environment check:', {
+        NODE_ENV: process.env.NODE_ENV,
+        MONGODB_URI: process.env.MONGODB_URI ? 'Set' : 'Not set',
+        JWT_SECRET: process.env.JWT_SECRET ? 'Set' : 'Not set'
+      });
+
       await dbConnect();
+      console.log('Database connected successfully');
       
       const { email, password } = req.body;
       console.log('Login attempt for email:', email);
@@ -46,9 +53,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       });
     } catch (error: any) {
       console.error('Login error:', error);
+      console.error('Error stack:', error.stack);
       return res.status(500).json({ 
         message: 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Server error',
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       });
     }
   }

@@ -3,10 +3,11 @@ import * as cookie from 'cookie';
 
 
 // Secret key for JWT (keep it secure in environment variables)
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-for-development';
+const JWT_SECRET = process.env.JWT_SECRET;
 
-if (!process.env.JWT_SECRET) {
-  console.warn('JWT_SECRET not found in environment variables. Using fallback secret.');
+if (!JWT_SECRET) {
+  console.error('JWT_SECRET not found in environment variables');
+  throw new Error('JWT_SECRET environment variable is required');
 }
 
 // Function to create a JWT token
@@ -32,7 +33,7 @@ export const setJwtCookie = (res: any, token: string) => {
     sameSite: 'lax',
     maxAge: 60 * 60, // 1 hour
     path: '/',
-    domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined,
+    // Don't set domain for Vercel - let it use the request domain
   }));
 };
 
@@ -44,7 +45,7 @@ export const clearJwtCookie = (res: any) => {
     sameSite: 'lax',
     maxAge: -1, // Immediately expires the cookie
     path: '/',
-    domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined,
+    // Don't set domain for Vercel - let it use the request domain
   }));
 };
 

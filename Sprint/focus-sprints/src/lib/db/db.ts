@@ -16,15 +16,31 @@ async function dbConnect() {
   if (cached.conn) {
     return cached.conn;
   }
+  
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, {
+    const opts = {
       bufferCommands: false,
-    }).then((mongoose) => {
+    };
+    
+    console.log('Connecting to MongoDB with URI:', MONGODB_URI.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@'));
+    
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+      console.log('MongoDB connected successfully');
       return mongoose;
+    }).catch((error) => {
+      console.error('MongoDB connection error:', error);
+      throw error;
     });
   }
-  cached.conn = await cached.promise;
-  return cached.conn;
+  
+  try {
+    cached.conn = await cached.promise;
+    return cached.conn;
+  } catch (error) {
+    console.error('Database connection failed:', error);
+    cached.promise = null; // Reset promise so it can be retried
+    throw error;
+  }
 }
 
 export default dbConnect;
