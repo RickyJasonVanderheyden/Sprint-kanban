@@ -1,4 +1,5 @@
 import mongoose, { Schema, models, model } from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const UserSchema = new Schema({
   username: { type: String, required: true, unique: true },
@@ -6,12 +7,22 @@ const UserSchema = new Schema({
   password: { type: String, required: true },
 }, { timestamps: true });
 
-// WARNING: This is NOT secure! Passwords should be hashed in production
-// TODO: Install bcryptjs and implement proper password hashing
+// Hash password before saving
+UserSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error as Error);
+  }
+});
 
-// Simple password comparison (NOT SECURE - for development only)
-UserSchema.methods.comparePassword = function(candidatePassword: string) {
-  return this.password === candidatePassword;
+// Compare password method
+UserSchema.methods.comparePassword = async function(candidatePassword: string) {
+  return await bcrypt.compare(candidatePassword, this.password);
 };
 
 const User = models.User || model('User', UserSchema);

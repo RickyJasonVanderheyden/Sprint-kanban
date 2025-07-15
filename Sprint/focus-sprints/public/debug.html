@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+        button { margin: 5px; padding: 10px; }
+        input { margin: 5px; padding: 5px; width: 200px; }
+        .result { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Auth Debug Tool</h1>
+    
+    <div class="section">
+        <h3>Check User</h3>
+        <input type="email" id="checkEmail" placeholder="Enter email" value="test@example.com">
+        <button onclick="checkUser()">Check User</button>
+        <div id="checkResult" class="result"></div>
+    </div>
+    
+    <div class="section">
+        <h3>Create Test User</h3>
+        <input type="email" id="createEmail" placeholder="Enter email" value="test@example.com">
+        <input type="password" id="createPassword" placeholder="Enter password" value="password123">
+        <button onclick="createTestUser()">Create Test User</button>
+        <div id="createResult" class="result"></div>
+    </div>
+    
+    <div class="section">
+        <h3>Test Login</h3>
+        <input type="email" id="loginEmail" placeholder="Enter email" value="test@example.com">
+        <input type="password" id="loginPassword" placeholder="Enter password" value="password123">
+        <button onclick="testLogin()">Test Login</button>
+        <div id="loginResult" class="result"></div>
+    </div>
+    
+    <div class="section">
+        <h3>Register New User</h3>
+        <input type="text" id="regUsername" placeholder="Username" value="testuser">
+        <input type="email" id="regEmail" placeholder="Email" value="newuser@example.com">
+        <input type="password" id="regPassword" placeholder="Password" value="password123">
+        <button onclick="registerUser()">Register User</button>
+        <div id="regResult" class="result"></div>
+    </div>
+    
+    <div class="section">
+        <button onclick="deleteAllUsers()" style="background: red; color: white;">Delete All Users</button>
+        <div id="deleteResult" class="result"></div>
+    </div>
+
+    <script>
+        async function checkUser() {
+            const email = document.getElementById('checkEmail').value;
+            try {
+                const response = await fetch('/api/debug/user-debug', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'check_user', email })
+                });
+                const data = await response.json();
+                document.getElementById('checkResult').innerHTML = `
+                    <strong>Status:</strong> ${response.status}<br>
+                    <strong>User exists:</strong> ${data.userExists}<br>
+                    <strong>Password length:</strong> ${data.passwordLength}<br>
+                    <strong>Response:</strong> ${JSON.stringify(data, null, 2)}
+                `;
+            } catch (error) {
+                document.getElementById('checkResult').innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        async function createTestUser() {
+            const email = document.getElementById('createEmail').value;
+            const password = document.getElementById('createPassword').value;
+            try {
+                const response = await fetch('/api/debug/user-debug', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'create_test_user', email, password })
+                });
+                const data = await response.json();
+                document.getElementById('createResult').innerHTML = `
+                    <strong>Status:</strong> ${response.status}<br>
+                    <strong>Response:</strong> ${JSON.stringify(data, null, 2)}
+                `;
+            } catch (error) {
+                document.getElementById('createResult').innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                document.getElementById('loginResult').innerHTML = `
+                    <strong>Status:</strong> ${response.status}<br>
+                    <strong>Response:</strong> ${JSON.stringify(data, null, 2)}
+                `;
+            } catch (error) {
+                document.getElementById('loginResult').innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        async function registerUser() {
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                const data = await response.json();
+                document.getElementById('regResult').innerHTML = `
+                    <strong>Status:</strong> ${response.status}<br>
+                    <strong>Response:</strong> ${JSON.stringify(data, null, 2)}
+                `;
+            } catch (error) {
+                document.getElementById('regResult').innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        async function deleteAllUsers() {
+            if (!confirm('Are you sure you want to delete all users?')) return;
+            try {
+                const response = await fetch('/api/debug/user-debug', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'delete_all_users' })
+                });
+                const data = await response.json();
+                document.getElementById('deleteResult').innerHTML = `
+                    <strong>Status:</strong> ${response.status}<br>
+                    <strong>Response:</strong> ${JSON.stringify(data, null, 2)}
+                `;
+            } catch (error) {
+                document.getElementById('deleteResult').innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

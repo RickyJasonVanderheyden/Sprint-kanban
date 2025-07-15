@@ -9,6 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       await dbConnect();
       
       const { email, password } = req.body;
+      console.log('Login attempt for email:', email);
 
       if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required' });
@@ -16,12 +17,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       // Find user by email
       const user = await User.findOne({ email });
+      console.log('User found:', user ? 'Yes' : 'No');
+      
       if (!user) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      // Check password (WARNING: This is not secure without bcryptjs!)
-      const isPasswordValid = user.comparePassword(password);
+      // Check password
+      console.log('Checking password...');
+      const isPasswordValid = await user.comparePassword(password);
+      console.log('Password valid:', isPasswordValid);
+      
       if (!isPasswordValid) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
@@ -38,9 +44,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           email: user.email
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
-      return res.status(500).json({ message: 'Internal server error' });
+      return res.status(500).json({ 
+        message: 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
     }
   }
 

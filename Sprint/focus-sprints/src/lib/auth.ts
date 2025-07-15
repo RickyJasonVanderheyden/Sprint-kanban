@@ -3,7 +3,11 @@ import * as cookie from 'cookie';
 
 
 // Secret key for JWT (keep it secure in environment variables)
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-for-development';
+
+if (!process.env.JWT_SECRET) {
+  console.warn('JWT_SECRET not found in environment variables. Using fallback secret.');
+}
 
 // Function to create a JWT token
 export const createJwtToken = (userId: string) => {
@@ -24,9 +28,11 @@ export const verifyJwtToken = (token: string) => {
 export const setJwtCookie = (res: any, token: string) => {
   res.setHeader('Set-Cookie', cookie.serialize('auth_token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Only use secure cookies in production
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
     maxAge: 60 * 60, // 1 hour
     path: '/',
+    domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined,
   }));
 };
 
@@ -35,8 +41,10 @@ export const clearJwtCookie = (res: any) => {
   res.setHeader('Set-Cookie', cookie.serialize('auth_token', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
     maxAge: -1, // Immediately expires the cookie
     path: '/',
+    domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined,
   }));
 };
 

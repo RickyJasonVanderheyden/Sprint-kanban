@@ -25,11 +25,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
 
-      // Create new user
+      // Create new user (password will be hashed automatically by the pre-save hook)
       const newUser = await User.create({
         username,
         email,
-        password // WARNING: This stores plain text password - use bcryptjs in production!
+        password
       });
 
       // Create JWT token with user's MongoDB _id
@@ -44,9 +44,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           email: newUser.email
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
-      return res.status(500).json({ message: 'Internal server error' });
+      
+      // Handle specific MongoDB errors
+      if (error.code === 11000) {
+        return res.status(400).json({ 
+          message: 'User with this email or username already exists' 
+        });
+      }
+      
+      return res.status(500).json({ 
+        message: 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
     }
   }
 
