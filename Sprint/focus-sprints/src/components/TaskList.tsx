@@ -140,25 +140,25 @@ const TaskList: React.FC<TaskListProps> = ({
   const getEnergyIcon = (level: EnergyLevel) => {
     switch (level) {
       case 'high':
-        return <BatteryFullIcon className="h-4 w-4 text-green-600 dark:text-green-300" />;
+        return <BatteryFullIcon className="h-4 w-4 text-green-600" />;
       case 'medium':
-        return <BatteryMediumIcon className="h-4 w-4 text-yellow-600 dark:text-yellow-300" />;
+        return <BatteryMediumIcon className="h-4 w-4 text-yellow-600" />;
       case 'low':
-        return <BatteryLowIcon className="h-4 w-4 text-red-600 dark:text-red-300" />;
+        return <BatteryLowIcon className="h-4 w-4 text-red-600" />;
     }
   };
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'work':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+        return 'bg-blue-100 text-blue-800';
       case 'personal':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+        return 'bg-purple-100 text-purple-800';
       case 'health':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+        return 'bg-green-100 text-green-800';
       case 'learning':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+        return 'bg-yellow-100 text-yellow-800';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+        return 'bg-gray-100 text-gray-800';
     }
   };
   return <div className="space-y-1 task-list-container">
@@ -217,18 +217,18 @@ const TaskList: React.FC<TaskListProps> = ({
                           {getEnergyIcon(task.energyLevel)}
                         </div>
                       )}
-                      <h3 className={`font-medium ${task.completed ? 'text-gray-500 line-through dark:text-gray-400' : 'text-gray-800 dark:text-gray-100'}`}>
+                      <h3 className={`font-medium ${task.completed ? 'text-gray-500 line-through' : 'text-gray-800'}`}>
                         {task.title}
                       </h3>
                     </div>
-                    <p className={`text-sm ${task.completed ? 'text-gray-400 dark:text-gray-500' : 'text-gray-600 dark:text-gray-300'}`}>
+                    <p className={`text-sm ${task.completed ? 'text-gray-400' : 'text-gray-600'}`}>
                       {task.description}
                     </p>
                     <div className="flex items-center mt-2 space-x-2">
                       <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(task.category)}`}>
                         {task.category}
                       </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-xs text-gray-500">
                         {task.estimatedMinutes} min
                       </span>
                     </div>
