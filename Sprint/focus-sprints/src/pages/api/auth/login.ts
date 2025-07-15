@@ -56,8 +56,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Error stack:', error.stack);
       return res.status(500).json({ 
         message: 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? error.message : 'Server error',
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        error: error.message, // Show error message in both dev and production for debugging
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+        environment: process.env.NODE_ENV
       });
     }
   }
