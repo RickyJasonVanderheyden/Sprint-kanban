@@ -418,7 +418,7 @@ body {
 .todo-paper .hole:nth-child(3) { top: 240px; }
 
 /* Mobile responsiveness */
-@media (max-width: 768px) {
+@media (min-width: 481px) and (max-width: 768px) {
   .todo-container {
     padding: 1rem;
   }
@@ -438,20 +438,48 @@ body {
 
 /* Mobile specific full height styles */
 @media (max-width: 480px) {
+  .todo-nav {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .todo-nav a {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .todo-nav svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  
   .todo-container {
-    padding: 0.5rem;
+    padding: 0.5rem 0.5rem 0rem 0.5rem;
     min-height: 100vh;
+    max-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
+    padding-top: 3.5rem;
+    position: relative;
   }
   
   .todo-paper {
-    min-height: calc(100vh - 1rem);
-    padding: 2rem 1rem 1rem 1rem;
+    min-height: calc(100vh - 3.5rem);
+    max-height: calc(100vh - 3.5rem);
+    height: calc(100vh - 3.5rem);
+    overflow: hidden;
+    padding: 2rem 1rem 0rem 1rem;
     margin-bottom: 0;
+    position: relative;
   }
   
   .todo-content {
-    min-height: calc(100vh - 120px);
-    padding-bottom: 2rem;
+    min-height: calc(100vh - 5.5rem);
+    max-height: calc(100vh - 5.5rem);
+    height: calc(100vh - 5.5rem);
+    overflow-y: auto;
+    padding-bottom: 0;
+    position: relative;
   }
 }
 
@@ -820,10 +848,19 @@ body {
   }
   
   .page {
-    padding: 1rem;
-    min-height: calc(100vh - 140px);
-    height: calc(100vh - 140px);
+    padding: 0.5rem 0.5rem 0rem 0.5rem;
+    min-height: calc(100vh - 100px);
+    max-height: calc(100vh - 100px);
+    height: calc(100vh - 100px);
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .page-content {
+    height: 100%;
     overflow-y: auto;
+    padding-bottom: 0;
+    position: relative;
   }
   
   .page-title {
@@ -1043,18 +1080,33 @@ body {
   }
   
   .cat-sign {
-    transform: scale(1.2);
+    transform: scale(1.5);
     transform-origin: left center;
   }
   
   .task-count {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 32px;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
   
   .task-label {
-    font-size: 10px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sign-text {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+    max-width: 110px !important;
+    line-height: 1.1 !important;
+  }
+  
+  .sign-board {
+    min-width: 110px !important;
+    min-height: 75px !important;
   }
   
   /* Energy selector mobile improvements */
@@ -1363,7 +1415,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: bold;
   color: #333;
   line-height: 1.2;
@@ -1374,7 +1426,7 @@ body {
 
 .task-count {
   display: block;
-  font-size: 16px;
+  font-size: 22px;
   color: #6366f1;
   font-weight: 800;
   margin-bottom: 2px;
@@ -1382,7 +1434,7 @@ body {
 
 .task-label {
   display: block;
-  font-size: 9px;
+  font-size: 12px;
   color: #666;
   text-transform: uppercase;
   letter-spacing: 0.3px;
