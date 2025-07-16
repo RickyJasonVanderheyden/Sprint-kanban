@@ -436,6 +436,25 @@ body {
   }
 }
 
+/* Mobile specific full height styles */
+@media (max-width: 480px) {
+  .todo-container {
+    padding: 0.5rem;
+    min-height: 100vh;
+  }
+  
+  .todo-paper {
+    min-height: calc(100vh - 1rem);
+    padding: 2rem 1rem 1rem 1rem;
+    margin-bottom: 0;
+  }
+  
+  .todo-content {
+    min-height: calc(100vh - 120px);
+    padding-bottom: 2rem;
+  }
+}
+
 /* Enhanced Floating Bubbles with Color Changes */
 .bubble-container {
   position: fixed;
@@ -802,7 +821,9 @@ body {
   
   .page {
     padding: 1rem;
-    min-height: 400px;
+    min-height: calc(100vh - 140px);
+    height: calc(100vh - 140px);
+    overflow-y: auto;
   }
   
   .page-title {
@@ -996,43 +1017,43 @@ body {
 /* Responsive scaling with proper animation handling */
 @media (max-width: 480px) {
   .task-cat {
-    transform: scale(0.75);
+    transform: scale(1.1);
     transform-origin: center;
     animation: cat-float-mobile 4s ease-in-out infinite;
   }
   
   .task-cat-container.dragging .task-cat {
     animation: none;
-    transform: scale(0.75);
+    transform: scale(1.1);
   }
   
   @keyframes cat-float-mobile {
     0%, 100% { 
-      transform: scale(0.75) translateY(0px) rotate(0deg);
+      transform: scale(1.1) translateY(0px) rotate(0deg);
     }
     25% { 
-      transform: scale(0.75) translateY(-4px) rotate(1deg);
+      transform: scale(1.1) translateY(-4px) rotate(1deg);
     }
     50% { 
-      transform: scale(0.75) translateY(-6px) rotate(0deg);
+      transform: scale(1.1) translateY(-6px) rotate(0deg);
     }
     75% { 
-      transform: scale(0.75) translateY(-4px) rotate(-1deg);
+      transform: scale(1.1) translateY(-4px) rotate(-1deg);
     }
   }
   
   .cat-sign {
-    transform: scale(0.85);
+    transform: scale(1.2);
     transform-origin: left center;
   }
   
   .task-count {
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 600;
   }
   
   .task-label {
-    font-size: 8px;
+    font-size: 10px;
     font-weight: 500;
   }
   
