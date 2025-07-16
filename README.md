@@ -23,18 +23,14 @@ Sprint Kanban is a productivity web application designed to help users organize 
   Unlock achievements and enjoy playful UI elements like floating bubbles and animated feedback.
 
 ## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+ 
+First,  Clone the project
+Open your terminal 
+1. cd  to file path of project
+2. cd to Sprints
+3. cd to focus-sprints
+4. npm install
+5. npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the app.
 
