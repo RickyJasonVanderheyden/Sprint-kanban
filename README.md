@@ -24,7 +24,7 @@ Sprint Kanban is a productivity web application designed to help users organize 
 
 ## Getting Started
  
-First,  Clone the project
+First,  Clone the project -
 Open your terminal 
 1. cd  to file path of project
 2. cd to Sprints
