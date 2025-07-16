@@ -32,7 +32,16 @@ Open your terminal
 4. npm install
 5. npm run dev
 
+**Important: the Env file is not given, if even the file is needed to get past login, contact me.**
+
+**A live version is available in Vercel; the link is listed below.**
+
+ This project is deployed on [Vercel](https://vercel.com/).
+You can access the live application here: [https://sprint-kanban.vercel.app/](https://sprint-kanban.vercel.app/)
+
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the app.
+
 
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
@@ -56,5 +65,5 @@ You can access the live application here: [https://sprint-kanban.vercel.app/](ht
 
 ---
 
-Homepage: [https://sprint-kanban.vercel.app](https://sprint-kanban.vercel.app)
+Homepage: [https://sprint-kanban.vercel.app](sprint-kanban.vercel.app)
 Repo: [RickyJasonVanderheyden/Sprint-kanban](https://github.com/RickyJasonVanderheyden/Sprint-kanban)
