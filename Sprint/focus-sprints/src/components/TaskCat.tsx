@@ -21,11 +21,21 @@ const TaskCat = forwardRef<TaskCatHandle, TaskCatProps>(({ remainingTasks, initi
   // Initialize position and portal container on mount
   useEffect(() => {
     if (!isInitialized) {
-      // Calculate initial position based on initialPosition prop
+      // Calculate initial position based on initialPosition prop and screen size
+      const screenWidth = window.innerWidth;
+      // Use base cat dimensions (90x110) and calculate actual size after scaling
+      const baseWidth = 90;
+      const baseHeight = 110;
+      const scale = screenWidth <= 480 ? 0.75 : screenWidth <= 768 ? 0.8 : screenWidth <= 1200 ? 0.9 : 1;
+      const catWidth = baseWidth * scale;
+      const catHeight = baseHeight * scale;
+      const margin = screenWidth <= 480 ? 10 : 20;
+      const signWidth = 120 * scale; // Account for sign width
+      
       const initialX = initialPosition === 'right' 
-        ? window.innerWidth - 160 // 160px from right edge (moved more to the left)
-        : 20; // 20px from left edge
-      const initialY = 120; // 120px from top (moved down from 80px)
+        ? screenWidth - catWidth - margin - signWidth // Extra space for sign
+        : margin;
+      const initialY = screenWidth <= 480 ? 80 : 120;
       setPosition({ x: initialX, y: initialY });
       setIsInitialized(true);
     }
@@ -37,10 +47,20 @@ const TaskCat = forwardRef<TaskCatHandle, TaskCatProps>(({ remainingTasks, initi
   // Expose reset function to parent
   useImperativeHandle(ref, () => ({
     resetPosition: () => {
+      const screenWidth = window.innerWidth;
+      // Use base cat dimensions (90x110) and calculate actual size after scaling
+      const baseWidth = 90;
+      const baseHeight = 110;
+      const scale = screenWidth <= 480 ? 0.75 : screenWidth <= 768 ? 0.8 : screenWidth <= 1200 ? 0.9 : 1;
+      const catWidth = baseWidth * scale;
+      const catHeight = baseHeight * scale;
+      const margin = screenWidth <= 480 ? 10 : 20;
+      const signWidth = 120 * scale; // Account for sign width
+      
       const resetX = initialPosition === 'right' 
-        ? window.innerWidth - 160 // 160px from right edge (moved more to the left)
-        : 20; // 20px from left edge
-      const resetY = 120; // 120px from top (moved down from 80px)
+        ? screenWidth - catWidth - margin - signWidth // Extra space for sign
+        : margin;
+      const resetY = screenWidth <= 480 ? 80 : 120;
       setPosition({ x: resetX, y: resetY });
       setIsInitialized(true);
     }
@@ -92,10 +112,22 @@ const TaskCat = forwardRef<TaskCatHandle, TaskCatProps>(({ remainingTasks, initi
         oldPosY: position.y
       });
       
-      // NO BOUNDARIES - cat can move anywhere!
+      // Add boundaries to keep cat within viewport
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      // Use base cat dimensions (90x110) and calculate actual size after scaling
+      const baseWidth = 90;
+      const baseHeight = 110;
+      const scale = screenWidth <= 480 ? 0.75 : screenWidth <= 768 ? 0.8 : screenWidth <= 1200 ? 0.9 : 1;
+      const catWidth = (baseWidth * scale) + (120 * scale); // Add space for sign
+      const catHeight = baseHeight * scale;
+      
+      const boundedX = Math.max(0, Math.min(newX, screenWidth - catWidth));
+      const boundedY = Math.max(0, Math.min(newY, screenHeight - catHeight));
+      
       setPosition({
-        x: newX,
-        y: newY
+        x: boundedX,
+        y: boundedY
       });
     };
 
@@ -106,10 +138,22 @@ const TaskCat = forwardRef<TaskCatHandle, TaskCatProps>(({ remainingTasks, initi
       const newX = touch.clientX - dragOffset.x;
       const newY = touch.clientY - dragOffset.y;
       
-      // NO BOUNDARIES - cat can move anywhere!
+      // Add boundaries to keep cat within viewport for touch devices
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      // Use base cat dimensions (80x100) and calculate actual size after scaling
+      const baseWidth = 80;
+      const baseHeight = 100;
+      const scale = screenWidth <= 480 ? 0.6 : screenWidth <= 768 ? 0.75 : screenWidth <= 1200 ? 0.9 : 1;
+      const catWidth = (baseWidth * scale) + (110 * scale); // Add space for sign
+      const catHeight = baseHeight * scale;
+      
+      const boundedX = Math.max(0, Math.min(newX, screenWidth - catWidth));
+      const boundedY = Math.max(0, Math.min(newY, screenHeight - catHeight));
+      
       setPosition({
-        x: newX,
-        y: newY
+        x: boundedX,
+        y: boundedY
       });
       
       e.preventDefault();
@@ -138,6 +182,34 @@ const TaskCat = forwardRef<TaskCatHandle, TaskCatProps>(({ remainingTasks, initi
     };
   }, [isDragging, dragOffset]);
 
+  // Handle window resize to reposition cat if needed
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      // Use base cat dimensions (80x100) and calculate actual size after scaling
+      const baseWidth = 80;
+      const baseHeight = 100;
+      const scale = screenWidth <= 480 ? 0.6 : screenWidth <= 768 ? 0.75 : screenWidth <= 1200 ? 0.9 : 1;
+      const catWidth = (baseWidth * scale) + (110 * scale); // Add space for sign
+      const catHeight = baseHeight * scale;
+      
+      // Check if cat is outside the viewport after resize
+      const maxX = screenWidth - catWidth;
+      const maxY = screenHeight - catHeight;
+      
+      if (position.x > maxX || position.y > maxY) {
+        setPosition(prev => ({
+          x: Math.min(prev.x, maxX),
+          y: Math.min(prev.y, maxY)
+        }));
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [position]);
+
   const catElement = (
     <div 
       className={`task-cat-container ${isDragging ? 'dragging' : ''}`}
@@ -150,7 +222,13 @@ const TaskCat = forwardRef<TaskCatHandle, TaskCatProps>(({ remainingTasks, initi
         transform: 'none',
         visibility: isInitialized ? 'visible' : 'hidden',
         zIndex: 9999999,
-        position: 'fixed'
+        position: 'fixed',
+        // Make touch interactions more responsive
+        touchAction: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        WebkitTouchCallout: 'none',
+        WebkitTapHighlightColor: 'transparent'
       }}
     >
       <div className="task-cat">

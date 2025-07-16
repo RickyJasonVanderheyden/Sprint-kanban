@@ -27,8 +27,21 @@ const FloatingAchievements: React.FC<FloatingAchievementsProps> = ({
 }) => {
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [isMobileToggleOpen, setIsMobileToggleOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
   useEffect(() => {
     setPortalContainer(document.body);
+    
+    // Check if device is mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   useEffect(() => {
@@ -48,8 +61,8 @@ const FloatingAchievements: React.FC<FloatingAchievementsProps> = ({
         icon: '🎯',
         value: todayCompleted,
         maxValue: todayTotal,
-        color: '#10b981',
-        glowColor: '#34d399',
+        color: '#4CAF50',
+        glowColor: '#66BB6A',
         isActive: todayCompleted > 0,
         type: 'progress'
       },
@@ -59,18 +72,18 @@ const FloatingAchievements: React.FC<FloatingAchievementsProps> = ({
         icon: '🔥',
         value: streakStats.currentStreak,
         maxValue: streakStats.longestStreak > 0 ? streakStats.longestStreak : 7,
-        color: '#f59e0b',
-        glowColor: '#fbbf24',
+        color: '#FF9800',
+        glowColor: '#FFB74D',
         isActive: streakStats.currentStreak > 0,
         type: 'streak'
       },
       {
         id: 'task-master',
         title: 'Tasks Done',
-        icon: '⚡',
+        icon: '✅',
         value: todayCompleted,
-        color: '#8b5cf6',
-        glowColor: '#a78bfa',
+        color: '#9C27B0',
+        glowColor: '#BA68C8',
         isActive: todayCompleted > 0,
         type: 'counter'
       },
@@ -80,8 +93,8 @@ const FloatingAchievements: React.FC<FloatingAchievementsProps> = ({
         icon: '💪',
         value: Math.round(completionRate),
         maxValue: 100,
-        color: '#ef4444',
-        glowColor: '#f87171',
+        color: '#2196F3',
+        glowColor: '#64B5F6',
         isActive: completionRate > 0,
         type: 'progress'
       }
@@ -114,29 +127,53 @@ const FloatingAchievements: React.FC<FloatingAchievementsProps> = ({
       return 100;
     };
 
+    const getDataType = () => {
+      switch (achievement.id) {
+        case 'daily-progress':
+          return 'daily';
+        case 'focus-streak':
+          return 'streak';
+        case 'task-master':
+          return 'tasks';
+        case 'productivity-level':
+          return 'productivity';
+        default:
+          return 'focus';
+      }
+    };
+
+    const getSubtitle = () => {
+      switch (achievement.id) {
+        case 'daily-progress':
+          return 'Today\'s Tasks';
+        case 'focus-streak':
+          return 'Consecutive Days';
+        case 'task-master':
+          return 'Completed';
+        case 'productivity-level':
+          return 'Completion Rate';
+        default:
+          return '';
+      }
+    };
+
     return (
       <div
         key={achievement.id}
-        className={`floating-achievement ${achievement.isActive ? 'active' : ''}`}
-        style={{
-          left: '50px',
-          top: `${150 + index * 100}px`,
-          animationDelay: `${index * 0.2}s`,
-          '--glow-color': achievement.glowColor,
-          '--main-color': achievement.color,
-        } as React.CSSProperties}
+        className="achievement"
+        data-type={getDataType()}
       >
         <div className="achievement-icon">{achievement.icon}</div>
         <div className="achievement-content">
           <div className="achievement-title">{achievement.title}</div>
           <div className="achievement-value">{getDisplayValue()}</div>
+          <div className="achievement-subtitle">{getSubtitle()}</div>
           {(achievement.type === 'progress' || achievement.type === 'streak') && achievement.maxValue && (
             <div className="achievement-progress">
               <div 
                 className="achievement-progress-bar"
                 style={{ 
                   width: `${getProgressPercentage()}%`,
-                  backgroundColor: achievement.color 
                 }}
               />
             </div>
@@ -147,9 +184,23 @@ const FloatingAchievements: React.FC<FloatingAchievementsProps> = ({
   };
 
   const achievementElements = (
-    <div className="floating-achievements-container">
-      {achievements.map(renderAchievement)}
-    </div>
+    <>
+      {isMobile && (
+        <div className="mobile-achievements-toggle">
+          <button 
+            className="toggle-button"
+            onClick={() => setIsMobileToggleOpen(!isMobileToggleOpen)}
+          >
+            <span className="toggle-icon">🏆</span>
+            <span className="toggle-text">Achievements</span>
+            <span className={`toggle-arrow ${isMobileToggleOpen ? 'open' : ''}`}>▼</span>
+          </button>
+        </div>
+      )}
+      <div className={`achievements-container ${isMobile ? 'mobile' : ''} ${isMobile && isMobileToggleOpen ? 'mobile-open' : ''}`}>
+        {achievements.map(renderAchievement)}
+      </div>
+    </>
   );
 
   if (!portalContainer) {

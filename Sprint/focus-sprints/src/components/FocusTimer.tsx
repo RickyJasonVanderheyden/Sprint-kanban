@@ -11,8 +11,10 @@ const FocusTimer: React.FC<FocusTimerProps> = ({
   onComplete,
   onCancel
 }) => {
-  // Default to 25 minutes (1500 seconds) for focus sprint
-  const [timeRemaining, setTimeRemaining] = useState(25 * 60);
+  // Use task's estimatedMinutes or default to 25 minutes
+  const totalMinutes = task.estimatedMinutes || 25;
+  const totalSeconds = totalMinutes * 60;
+  const [timeRemaining, setTimeRemaining] = useState(totalSeconds);
   const [isActive, setIsActive] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   useEffect(() => {
@@ -34,7 +36,7 @@ const FocusTimer: React.FC<FocusTimerProps> = ({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
   const calculateProgress = (): number => {
-    return (25 * 60 - timeRemaining) / (25 * 60) * 100;
+    return (totalSeconds - timeRemaining) / totalSeconds * 100;
   };
   return <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
@@ -71,7 +73,7 @@ const FocusTimer: React.FC<FocusTimerProps> = ({
               Pause
             </button> : <button onClick={() => setIsActive(true)} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium flex items-center">
               <TimerIcon size={18} className="mr-2" />
-              {timeRemaining === 25 * 60 ? 'Start' : 'Resume'} Focus
+              {timeRemaining === totalSeconds ? 'Start' : 'Resume'} Focus
             </button>}
         </div>
         {showConfirmation && <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
