@@ -52,19 +52,11 @@ API routes are available under `/api/*`, for example:
   - `src/components/` - React components (TaskList, TaskDashboard, AddTask, FocusTimer, etc.).
   - `src/lib/` - Utilities, types, and database access.
 
-## Learn More
-
-- [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - Interactive Next.js tutorial.
 
 ## Deployment
 
 This project is deployed on [Vercel](https://vercel.com/).
 You can access the live application here: [https://sprint-kanban.vercel.app/](https://sprint-kanban.vercel.app/)
-
-## License
-
-This project currently does not specify a license.
 
 ---
 
